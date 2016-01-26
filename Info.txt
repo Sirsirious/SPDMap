@@ -1,0 +1,7 @@
+Simple PHP Data Mapping - SPDMap
+This is a simple Data Mapping API for PHP developed by Tiago F. Duque
+as a mean to learn more about PHP, Data Mapping and create a simple
+and understandable way to insert data into Databases.
+Its currently solely based on PDO and native PHP with no extra addons.
+Feel free to contribute.
+You can contact me at tfduque@hotmail.com
