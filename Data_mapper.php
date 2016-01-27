@@ -66,19 +66,26 @@ class Data_mapper {
     
     private function mapArrays($arrays, $insertId, $object){
         foreach($arrays as $arrayName){
+            $usename = $arrayName;
+            $secondReference="";
             $getName = 'get'.$arrayName;
             $array = $object->$getName();
             $type = gettype($array[0]);
-            
+            $tablename = get_class($object)."_".$usename;
             if($type == "string"){
                 $type = "varchar(255)";
-            } // Ainda náo funciona. Problema em criar tabela.
-            $tablename = get_class($object)."_".$arrayName;
-            $sql = utf8_decode("create table if not exists ".$tablename." (id_".get_class($object)." int unsigned not null, ".$arrayName." ".$type.""
-                    . "constraint fk_".$tablename." foreign key (".$arrayName.") references ".get_class($object)."(id));");
+            }
+            if(stristr(substr($arrayName, 0, 2), "id")){
+                $usename = substr($arrayName, 3);
+                $tablename = get_class($object)."_".$usename;
+                $type = "int unsigned not null";
+                $secondReference = ", constraint fk_".$usename."_".  get_class($object)." foreign key (".$arrayName.") references ".$usename."(id)";   
+            }
+            $sql = utf8_decode("create table if not exists ".$tablename." (id_".get_class($object)." int unsigned not null, ".$arrayName." ".$type.", "
+                    . "constraint fk_".$tablename." foreign key (id_".get_class($object).") references ".get_class($object)."(id) ".$secondReference.");");
+            echo $sql;
             $this->connection->query($sql);
             foreach ($array as $item){
-                echo "maparrays";
                 $item = $this->stringQuoter($item);
                 $sql = utf8_decode("insert into ".$tablename." (id_".get_class($object).",".$arrayName.") values (".$insertId.",".$item.")");
                 $this->connection->query($sql);
