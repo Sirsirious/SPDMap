@@ -39,9 +39,16 @@ class Data_mapper {
                 if (!empty($arrays)) {
                     $this->mapArrays($arrays, $lastId, $object);
                 };
-                if (!empty($objects)) {
-                    // TODO : Object Mapper 
-                }
+                // Not sure if working, have to make an object with an object to test it.
+                if ($secondaryId == false || $secondaryName == false)
+                    if (!empty($objects)) { {
+                            foreach ($objects as $obj) {
+                                $this->insert($obj, $lastId, get_class($object));
+                            }
+                        }
+                    } else {
+                        $this->mapTertiary($secondaryId, $secondaryName, $lastId, "id_".get_class($object));
+                    }
             }
         }
     }
@@ -66,9 +73,9 @@ class Data_mapper {
 
     private function mapArrays($arrays, $insertId, $object) {
         foreach ($arrays as $arrayName) {
-            $getName = 'get'.$arrayName;
+            $getName = 'get' . $arrayName;
             $array = $object->$getName();
-            foreach($array as $item){
+            foreach ($array as $item) {
                 $this->mapTertiary($insertId, get_class($object), $item, $arrayName);
             }
 //        $usename = $arrayName;
